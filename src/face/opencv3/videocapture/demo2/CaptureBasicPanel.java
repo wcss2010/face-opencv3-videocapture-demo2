@@ -182,5 +182,5 @@ public class CaptureBasicPanel extends JPanel {
             Imgproc.rectangle(img, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),new Scalar(0, 0, 255), 2);  
         }  
         return img;  
-    }    
+    }
 }
