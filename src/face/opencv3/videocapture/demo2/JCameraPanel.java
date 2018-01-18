@@ -31,6 +31,11 @@ import org.opencv.videoio.Videoio;
 public class JCameraPanel extends javax.swing.JPanel implements Runnable {
 
     /**
+     * 最大的摄像头数据刷新时间（毫秒）
+     */
+    public static int MAX_CAMERA_REFRESH_TIME = 100;
+    
+    /**
      * 背景图片
      */
     public BufferedImage backgroundImg;
@@ -185,7 +190,7 @@ public class JCameraPanel extends javax.swing.JPanel implements Runnable {
                 //读取图像
                 cameraObj.read(capImg);
 
-                //把RGB颜色转换成Gray
+                //把RGB颜色转换成很白图片
                 Imgproc.cvtColor(capImg, temp, Imgproc.COLOR_RGB2GRAY);
 
                 //分析图片
@@ -204,7 +209,7 @@ public class JCameraPanel extends javax.swing.JPanel implements Runnable {
                 });
 
                 try {
-                    Thread.sleep(20);
+                    Thread.sleep(MAX_CAMERA_REFRESH_TIME);
                 } catch (Exception ex) {
                 }
             }
