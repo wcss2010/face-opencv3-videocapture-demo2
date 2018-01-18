@@ -5,6 +5,7 @@
  */
 package face.opencv3.videocapture.demo2;
 
+import static face.opencv3.videocapture.demo2.CaptureBasicPanel.detectFace;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -53,6 +54,21 @@ public class JCameraPanel extends javax.swing.JPanel implements Runnable {
      * 守护进程对象
      */
     protected Thread threadObj = null;
+
+    /**
+     * 摄像头图片高度
+     */
+    public int cameraHeight;
+
+    /**
+     * 摄像头图片宽度
+     */
+    public int cameraWidth;
+
+    /**
+     * 图片内容检索器
+     */
+    public IImageDetect imageDetect = null;
 
     /**
      * Creates new form JCameraPanel
@@ -114,13 +130,12 @@ public class JCameraPanel extends javax.swing.JPanel implements Runnable {
         if (threadObj == null) {
             this.cameraIndex = cameraIndex;
             this.isRunning = true;
-            
+
             threadObj = new Thread(this);
             threadObj.setDaemon(true);
             threadObj.start();
-        }else
-        {
-            throw new Exception("Camera Is Busy!");
+        } else {
+            throw new Exception("对不起，系统繁忙！");
         }
     }
 
@@ -155,8 +170,47 @@ public class JCameraPanel extends javax.swing.JPanel implements Runnable {
 
     @Override
     public void run() {
-        while (isRunning) {
+        try {
+            cameraObj = new VideoCapture(this.cameraIndex);
+            cameraHeight = (int) cameraObj.get(Videoio.CAP_PROP_FRAME_HEIGHT);
+            cameraWidth = (int) cameraObj.get(Videoio.CAP_PROP_FRAME_WIDTH);
+            if (cameraHeight == 0 || cameraWidth == 0) {
+                stop();
+                System.out.println("对不起，没有找到摄像头！");
+            }
 
+            Mat temp = new Mat();
+            Mat capImg = new Mat();
+            while (isRunning) {                
+                //读取图像
+                cameraObj.read(capImg);
+                
+                //把RGB颜色转换成Gray
+                Imgproc.cvtColor(capImg, temp, Imgproc.COLOR_RGB2GRAY);
+
+                //显示并且分析图片
+                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (imageDetect != null) {
+                            backgroundImg = convertToImage(imageDetect.detect(capImg));
+                        } else {
+                            backgroundImg = convertToImage(capImg);
+                        }
+
+                        repaint();
+                    }
+                });
+
+                try {
+                    Thread.sleep(20);
+                } catch (Exception ex) {
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        } finally {
+            cameraObj.release();
         }
 
         System.out.println("对不起，摄像头守护进程退出！");
