@@ -39,12 +39,15 @@ public class CaperaFrame extends javax.swing.JFrame {
                     return detectFace(source);
                 } catch (Exception ex) {
                     Logger.getLogger(CaperaFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                return null;
+                    return null;
+                }                
             }
         };
         
         plContent.add(cameraPanel);
+        cameraPanel.setLocation(0,0);
+        cameraPanel.setSize(500, 500);
+        this.setSize(510,600);
     }
 
     /**
@@ -128,16 +131,7 @@ public class CaperaFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout plContentLayout = new javax.swing.GroupLayout(plContent);
-        plContent.setLayout(plContentLayout);
-        plContentLayout.setHorizontalGroup(
-            plContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        plContentLayout.setVerticalGroup(
-            plContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 647, Short.MAX_VALUE)
-        );
+        plContent.setLayout(null);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
