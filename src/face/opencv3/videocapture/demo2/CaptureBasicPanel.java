@@ -62,7 +62,7 @@ public class CaptureBasicPanel extends JPanel {
         }  
     }  
       
-    public static void main(String[] args) {  
+    public static void main_old(String[] args) {  
         try{  
             System.loadLibrary(Core.NATIVE_LIBRARY_NAME);  
               
