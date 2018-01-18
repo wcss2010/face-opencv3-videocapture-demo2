@@ -181,23 +181,24 @@ public class JCameraPanel extends javax.swing.JPanel implements Runnable {
 
             Mat temp = new Mat();
             Mat capImg = new Mat();
-            while (isRunning) {                
+            while (isRunning) {
                 //读取图像
                 cameraObj.read(capImg);
-                
+
                 //把RGB颜色转换成Gray
                 Imgproc.cvtColor(capImg, temp, Imgproc.COLOR_RGB2GRAY);
 
-                //显示并且分析图片
+                //分析图片
+                if (imageDetect != null) {
+                    backgroundImg = convertToImage(imageDetect.detect(capImg));
+                } else {
+                    backgroundImg = convertToImage(capImg);
+                }
+
+                //显示图片
                 javax.swing.SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        if (imageDetect != null) {
-                            backgroundImg = convertToImage(imageDetect.detect(capImg));
-                        } else {
-                            backgroundImg = convertToImage(capImg);
-                        }
-
                         repaint();
                     }
                 });
