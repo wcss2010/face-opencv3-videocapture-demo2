@@ -47,7 +47,7 @@ public class CaperaFrame extends javax.swing.JFrame {
         plContent.add(cameraPanel);
         cameraPanel.setLocation(0,0);
         cameraPanel.setSize(500, 500);
-        this.setSize(510,600);
+        this.setSize(910,600);
     }
 
     /**
@@ -56,7 +56,6 @@ public class CaperaFrame extends javax.swing.JFrame {
      */
     public static Mat detectFace(Mat img) throws Exception
     {
-
         System.out.println("Running DetectFace ... ");
         // 从配置文件lbpcascade_frontalface.xml中创建一个人脸识别器，该文件位于opencv安装目录中
         CascadeClassifier faceDetector = new CascadeClassifier("C:\\opencv\\sources\\data\\haarcascades\\haarcascade_frontalface_alt.xml");
@@ -91,6 +90,9 @@ public class CaperaFrame extends javax.swing.JFrame {
         btnOpen = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
         plContent = new javax.swing.JPanel();
+        plHint = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtHint = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -119,7 +121,7 @@ public class CaperaFrame extends javax.swing.JFrame {
                 .addComponent(btnOpen)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnClose)
-                .addContainerGap(539, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         plTopLayout.setVerticalGroup(
             plTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,6 +135,19 @@ public class CaperaFrame extends javax.swing.JFrame {
 
         plContent.setLayout(null);
 
+        jScrollPane1.setViewportView(txtHint);
+
+        javax.swing.GroupLayout plHintLayout = new javax.swing.GroupLayout(plHint);
+        plHint.setLayout(plHintLayout);
+        plHintLayout.setHorizontalGroup(
+            plHintLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
+        );
+        plHintLayout.setVerticalGroup(
+            plHintLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -141,7 +156,10 @@ public class CaperaFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(plTop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(plContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(plContent, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(plHint, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -150,7 +168,9 @@ public class CaperaFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(plTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(plContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(plContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(plHint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -209,7 +229,10 @@ public class CaperaFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnOpen;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel plContent;
+    private javax.swing.JPanel plHint;
     private javax.swing.JPanel plTop;
+    private javax.swing.JTextPane txtHint;
     // End of variables declaration//GEN-END:variables
 }
