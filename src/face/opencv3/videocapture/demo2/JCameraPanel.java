@@ -24,25 +24,45 @@ import org.opencv.videoio.Videoio;
 
 /**
  * 基于OpenCV实现的视频图像采集面板
- * 
+ *
  * @author wcss
  */
-public class JCameraPanel extends javax.swing.JPanel {
+public class JCameraPanel extends javax.swing.JPanel implements Runnable {
+
     /**
      * 背景图片
      */
-    protected BufferedImage backgroundImg;  
+    public BufferedImage backgroundImg;
+
+    /**
+     * 摄像头对象
+     */
+    protected VideoCapture cameraObj = null;
+
+    /**
+     * 摄像头序号
+     */
+    protected int cameraIndex = 0;
+
+    /**
+     * 正在运行
+     */
+    protected boolean isRunning = false;
+
+    /**
+     * 守护进程对象
+     */
+    protected Thread threadObj = null;
+
     /**
      * Creates new form JCameraPanel
      */
     public JCameraPanel() {
         initComponents();
-        
-        try
-        {
-            System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
-        }catch(Exception ex)
-        {
+
+        try {
+            System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        } catch (Exception ex) {
             System.out.println(ex.toString());
             throw ex;
         }
@@ -50,39 +70,68 @@ public class JCameraPanel extends javax.swing.JPanel {
 
     /**
      * 将OpenCV的图像转换为Java的BufferedImage对象以便显示在窗体中
+     *
      * @param mat
-     * @return 
+     * @return
      */
-    public static BufferedImage convertToImage(Mat mat){  
-        int dataSize =mat.cols()*mat.rows()*(int)mat.elemSize();  
-        byte[] data=new byte[dataSize];  
-        mat.get(0, 0,data);  
-        int type=mat.channels()==1?  
-                BufferedImage.TYPE_BYTE_GRAY:BufferedImage.TYPE_3BYTE_BGR;  
-          
-        if(type==BufferedImage.TYPE_3BYTE_BGR){  
-            for(int i=0;i<dataSize;i+=3){  
-                byte blue=data[i+0];  
-                data[i+0]=data[i+2];  
-                data[i+2]=blue;  
-            }  
-        }  
-        BufferedImage image=new BufferedImage(mat.cols(),mat.rows(),type);  
-        image.getRaster().setDataElements(0, 0, mat.cols(), mat.rows(), data);  
-          
-        return image;  
+    public static BufferedImage convertToImage(Mat mat) {
+        int dataSize = mat.cols() * mat.rows() * (int) mat.elemSize();
+        byte[] data = new byte[dataSize];
+        mat.get(0, 0, data);
+        int type = mat.channels() == 1
+                ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_3BYTE_BGR;
+
+        if (type == BufferedImage.TYPE_3BYTE_BGR) {
+            for (int i = 0; i < dataSize; i += 3) {
+                byte blue = data[i + 0];
+                data[i + 0] = data[i + 2];
+                data[i + 2] = blue;
+            }
+        }
+        BufferedImage image = new BufferedImage(mat.cols(), mat.rows(), type);
+        image.getRaster().setDataElements(0, 0, mat.cols(), mat.rows(), data);
+
+        return image;
     }
-    
+
     /**
      * 绘图函数
-     * @param g 
+     *
+     * @param g
      */
-    protected void paintComponent(Graphics g){  
-        if(backgroundImg!=null){  
-            g.drawImage(backgroundImg, 0, 0, backgroundImg.getWidth(),backgroundImg.getHeight(),this);  
-        }  
+    protected void paintComponent(Graphics g) {
+        if (backgroundImg != null) {
+            g.drawImage(backgroundImg, 0, 0, backgroundImg.getWidth(), backgroundImg.getHeight(), this);
+        }
     }
-    
+
+    /**
+     * 开启服务
+     *
+     * @param cameraIndex
+     */
+    public void start(int cameraIndex) throws Exception {
+        if (threadObj == null) {
+            this.cameraIndex = cameraIndex;
+            this.isRunning = true;
+            
+            threadObj = new Thread(this);
+            threadObj.setDaemon(true);
+            threadObj.start();
+        }else
+        {
+            throw new Exception("Camera Is Busy!");
+        }
+    }
+
+    /**
+     * 结束服务
+     */
+    public void stop() {
+        this.isRunning = false;
+        this.threadObj = null;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -104,6 +153,14 @@ public class JCameraPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    @Override
+    public void run() {
+        while (isRunning) {
+
+        }
+
+        System.out.println("对不起，摄像头守护进程退出！");
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
