@@ -23,6 +23,9 @@ import org.opencv.objdetect.CascadeClassifier;
  */
 public class CaperaFrame extends javax.swing.JFrame {
     JCameraPanel cameraPanel = null;
+    CascadeClassifier faceDetector = null;
+    CascadeClassifier planeDetector = null;
+    private Mat NowImg = null;
     
     /**
      * Creates new form CaperaFrame
@@ -48,33 +51,28 @@ public class CaperaFrame extends javax.swing.JFrame {
         cameraPanel.setLocation(0,0);
         cameraPanel.setSize(500, 500);
         this.setSize(910,600);
+        
+        initConfig();
     }
 
+    private void initConfig() {
+        faceDetector = new CascadeClassifier("C:\\opencv\\sources\\data\\haarcascades\\haarcascade_frontalface_alt.xml");
+        planeDetector = new CascadeClassifier("C:\\opencvStudy\\xml\\cascade.xml");
+    }
+    
     /**
      * opencv实现人脸识别
      * @param img
      */
-    public static Mat detectFace(Mat img) throws Exception
+    public Mat detectFace(Mat imgs) throws Exception
     {
-        System.out.println("Running DetectFace ... ");
-        // 从配置文件lbpcascade_frontalface.xml中创建一个人脸识别器，该文件位于opencv安装目录中
-        CascadeClassifier faceDetector = new CascadeClassifier("C:\\opencv\\sources\\data\\haarcascades\\haarcascade_frontalface_alt.xml");
-
-        // 在图片中检测人脸
-        MatOfRect faceDetections = new MatOfRect();
-
-        faceDetector.detectMultiScale(img, faceDetections);
-
-        //System.out.println(String.format("Detected %s faces", faceDetections.toArray().length));
-
-        Rect[] rects = faceDetections.toArray();
-        if(rects != null && rects.length >= 1){          
-            for (Rect rect : rects) {  
-                Imgproc.rectangle(img, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),  
-                        new Scalar(0, 0, 255), 2);  
-            } 
-        }
-        return img;
+        NowImg = imgs;
+        return NowImg;
+    }
+    
+    public void PrintLog(String str)
+    {
+        txtHint.setText(txtHint.getText() + str + "\n");
     }
     
     /**
@@ -89,6 +87,7 @@ public class CaperaFrame extends javax.swing.JFrame {
         plTop = new javax.swing.JPanel();
         btnOpen = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
+        btnCheck = new javax.swing.JButton();
         plContent = new javax.swing.JPanel();
         plHint = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -112,6 +111,13 @@ public class CaperaFrame extends javax.swing.JFrame {
             }
         });
 
+        btnCheck.setText("Check");
+        btnCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout plTopLayout = new javax.swing.GroupLayout(plTop);
         plTop.setLayout(plTopLayout);
         plTopLayout.setHorizontalGroup(
@@ -121,6 +127,8 @@ public class CaperaFrame extends javax.swing.JFrame {
                 .addComponent(btnOpen)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnClose)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         plTopLayout.setVerticalGroup(
@@ -129,7 +137,8 @@ public class CaperaFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(plTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOpen)
-                    .addComponent(btnClose))
+                    .addComponent(btnClose)
+                    .addComponent(btnCheck))
                 .addContainerGap())
         );
 
@@ -191,6 +200,37 @@ public class CaperaFrame extends javax.swing.JFrame {
         cameraPanel.stop();
     }//GEN-LAST:event_btnCloseActionPerformed
 
+    private void btnCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckActionPerformed
+        // TODO add your handling code here:
+        System.out.println("正在检测图像中的物体 ... ");
+
+        // 在图片中检测人脸或者飞机
+        MatOfRect faceDetections = new MatOfRect();
+
+        // 检查并标注人脸
+        faceDetector.detectMultiScale(NowImg, faceDetections);
+        Rect[] rectsa = faceDetections.toArray();
+        PrintLog("检测到" + rectsa.length + "张人脸!");
+        if(rectsa != null && rectsa.length >= 1){          
+            for (Rect rect : rectsa) {  
+                Imgproc.rectangle(NowImg, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),  
+                        new Scalar(0, 0, 255), 2);  
+            } 
+        }
+        
+        //检查并标注飞机
+        faceDetections = new MatOfRect();
+        planeDetector.detectMultiScale(NowImg, faceDetections);
+        Rect[] rectsb = faceDetections.toArray();
+        PrintLog("检测到" + rectsb.length + "架J20隐形灰机!");
+        if(rectsb != null && rectsb.length >= 1){          
+            for (Rect rect : rectsb) {  
+                Imgproc.rectangle(NowImg, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),  
+                        new Scalar(0, 0, 255), 2);  
+            } 
+        }
+    }//GEN-LAST:event_btnCheckActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -227,6 +267,7 @@ public class CaperaFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCheck;
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnOpen;
     private javax.swing.JScrollPane jScrollPane1;
